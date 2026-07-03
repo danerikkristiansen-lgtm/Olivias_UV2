@@ -1,0 +1,996 @@
+/* ==========================================================================
+   KlimaSammenligning - Design System & Stilsett
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Globale Variabler og Temaer
+   -------------------------------------------------------------------------- */
+:root {
+    /* Fontfamilie */
+    --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    
+    /* Systemoverganger */
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 24px;
+    --radius-full: 9999px;
+
+    /* Akkordfarger for leverandører */
+    --color-met: #0ea5e9;
+    --color-openmeteo: #10b981;
+    --color-wttr: #f59e0b;
+    --color-error: #ef4444;
+    --color-success: #10b981;
+}
+
+/* --- Mørkt Tema (Standard) --- */
+.dark-theme {
+    --bg-primary: #070a13;
+    --bg-secondary: #0d1222;
+    --bg-card: rgba(18, 25, 43, 0.55);
+    --bg-card-hover: rgba(25, 35, 60, 0.7);
+    --bg-control: rgba(255, 255, 255, 0.05);
+    --bg-control-active: rgba(255, 255, 255, 0.15);
+    
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-inverse: #0f172a;
+    
+    --border-color: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.15);
+    
+    --shadow-main: 0 12px 40px -10px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 30px rgba(14, 165, 233, 0.15);
+    
+    /* Blobfarger */
+    --blob-1-color: rgba(14, 165, 233, 0.15);
+    --blob-2-color: rgba(139, 92, 246, 0.12);
+    --blob-3-color: rgba(236, 72, 153, 0.08);
+
+    /* Klimagradienter (Mørk) */
+    --gradient-moss: linear-gradient(135deg, rgba(16, 52, 102, 0.9) 0%, rgba(13, 148, 136, 0.8) 100%);
+    --gradient-brekkstad: linear-gradient(135deg, rgba(15, 32, 67, 0.9) 0%, rgba(99, 102, 241, 0.85) 100%);
+    --gradient-phuket: linear-gradient(135deg, rgba(146, 64, 14, 0.9) 0%, rgba(219, 39, 119, 0.8) 100%);
+}
+
+/* --- Lyst Tema --- */
+.light-theme {
+    --bg-primary: #f1f5f9;
+    --bg-secondary: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.65);
+    --bg-card-hover: rgba(255, 255, 255, 0.85);
+    --bg-control: rgba(15, 23, 42, 0.05);
+    --bg-control-active: #ffffff;
+    
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-inverse: #ffffff;
+    
+    --border-color: rgba(15, 23, 42, 0.08);
+    --border-hover: rgba(15, 23, 42, 0.15);
+    
+    --shadow-main: 0 12px 40px -10px rgba(148, 163, 184, 0.25);
+    --shadow-glow: 0 0 30px rgba(14, 165, 233, 0.06);
+    
+    /* Blobfarger */
+    --blob-1-color: rgba(14, 165, 233, 0.08);
+    --blob-2-color: rgba(139, 92, 246, 0.06);
+    --blob-3-color: rgba(244, 63, 94, 0.04);
+
+    /* Klimagradienter (Lys) */
+    --gradient-moss: linear-gradient(135deg, rgba(14, 165, 233, 0.35) 0%, rgba(20, 184, 166, 0.35) 100%);
+    --gradient-brekkstad: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(165, 180, 252, 0.35) 100%);
+    --gradient-phuket: linear-gradient(135deg, rgba(245, 158, 11, 0.35) 0%, rgba(244, 63, 94, 0.3) 100%);
+}
+
+/* --------------------------------------------------------------------------
+   2. Resets og Grunnleggende Oppsett
+   -------------------------------------------------------------------------- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    transition: background-color var(--transition-slow), color var(--transition-fast);
+    position: relative;
+}
+
+button {
+    font-family: inherit;
+    border: none;
+    background: none;
+    cursor: pointer;
+    outline: none;
+}
+
+/* Deaktiver fokusramme for klikk, men behold den for tastaturnavigasjon */
+button:focus-visible, 
+[role="button"]:focus-visible {
+    box-shadow: 0 0 0 3px var(--color-met);
+}
+
+/* --------------------------------------------------------------------------
+   3. Bakgrunns-blober (Ambient Glow)
+   -------------------------------------------------------------------------- */
+.blob {
+    position: absolute;
+    border-radius: var(--radius-full);
+    filter: blur(140px);
+    z-index: -1;
+    pointer-events: none;
+    transition: background-color var(--transition-slow);
+}
+
+.blob-1 {
+    width: 600px;
+    height: 600px;
+    background-color: var(--blob-1-color);
+    top: -150px;
+    left: -100px;
+    animation: blob-float 25s infinite alternate ease-in-out;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background-color: var(--blob-2-color);
+    top: 40%;
+    right: -150px;
+    animation: blob-float 30s infinite alternate-reverse ease-in-out;
+}
+
+.blob-3 {
+    width: 550px;
+    height: 550px;
+    background-color: var(--blob-3-color);
+    bottom: -100px;
+    left: 20%;
+    animation: blob-float 28s infinite alternate ease-in-out;
+}
+
+@keyframes blob-float {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(60px, -40px) scale(1.15); }
+    100% { transform: translate(-30px, 50px) scale(0.9); }
+}
+
+/* --------------------------------------------------------------------------
+   4. Header Styling
+   -------------------------------------------------------------------------- */
+.app-header {
+    padding: 3rem 1.5rem 1.5rem 1.5rem;
+    position: relative;
+    z-index: 10;
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--color-met) 0%, var(--color-openmeteo) 100%);
+    border-radius: 12px;
+    color: white;
+    padding: 8px;
+    box-shadow: 0 8px 20px -5px rgba(14, 165, 233, 0.4);
+    animation: pulse-slow 4s infinite ease-in-out;
+}
+
+.logo h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--text-main);
+}
+
+.logo h1 span {
+    background: linear-gradient(135deg, var(--color-met) 0%, var(--color-openmeteo) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* Kontroller (Refresh, Enhet, Tema) */
+.controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: var(--bg-secondary);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    border: 1px fill transparent;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-main);
+    transition: background-color var(--transition-slow), border-color var(--transition-fast);
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 0.5rem 0 1rem;
+    border-right: 1px solid var(--border-color);
+}
+
+.control-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+/* Enhets-toggle switch */
+.toggle-switch {
+    display: flex;
+    background: var(--bg-control);
+    border-radius: 8px;
+    padding: 4px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    width: 80px;
+}
+
+.toggle-option {
+    flex: 1;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    z-index: 2;
+    padding: 4px 0;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+}
+
+.toggle-option.active {
+    color: var(--text-inverse);
+}
+
+.toggle-slider {
+    position: absolute;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
+    background: var(--text-main);
+    border-radius: 6px;
+    top: 4px;
+    left: 4px;
+    z-index: 1;
+    transition: transform var(--transition-normal);
+}
+
+/* Om enhet F er valgt, flyttes slideren til høyre */
+.toggle-switch.fahrenheit .toggle-slider {
+    transform: translateX(100%);
+}
+
+/* Ikon-knapper (Tema) */
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--bg-control);
+    border-radius: 8px;
+    color: var(--text-muted);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-icon:hover {
+    background-color: var(--bg-control-active);
+    color: var(--text-main);
+}
+
+.sun-icon { display: none; }
+.moon-icon { display: block; }
+
+.dark-theme .sun-icon { display: block; }
+.dark-theme .moon-icon { display: none; }
+
+/* Hovedknapp (Refresh) */
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-refresh {
+    background: var(--text-main);
+    color: var(--text-inverse);
+}
+
+.btn-refresh:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-refresh:active {
+    transform: translateY(1px);
+}
+
+.refresh-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.8s ease-in-out;
+}
+
+.btn-refresh:hover .refresh-icon {
+    transform: rotate(360deg);
+}
+
+.refresh-spinning {
+    animation: rotate-infinite 1s infinite linear;
+}
+
+@keyframes rotate-infinite {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------------------------
+   5. Dashboard Layout og Kort
+   -------------------------------------------------------------------------- */
+.dashboard-container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    flex: 1;
+}
+
+/* Stedskort */
+.location-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-main);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform var(--transition-normal), border-color var(--transition-fast), background-color var(--transition-slow);
+}
+
+.location-card:hover {
+    border-color: var(--border-hover);
+}
+
+/* --------------------------------------------------------------------------
+   6. Location Hero Panel (Venstre/Topp panel)
+   -------------------------------------------------------------------------- */
+.location-hero {
+    padding: 3rem 2.5rem;
+    color: white;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.05) 0%, transparent 80%);
+}
+
+/* Klimaspesifikke bakgrunner */
+.climate-nordic-moss .location-hero {
+    background: var(--gradient-moss);
+}
+
+.climate-nordic-brekkstad .location-hero {
+    background: var(--gradient-brekkstad);
+}
+
+.climate-tropical-phuket .location-hero {
+    background: var(--gradient-phuket);
+}
+
+.location-meta {
+    position: relative;
+    z-index: 2;
+}
+
+.location-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.geo-badge {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.badge-th {
+    background: rgba(220, 38, 38, 0.25);
+    border: 1px solid rgba(220, 38, 38, 0.15);
+}
+
+.time-badge {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.location-meta h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.coords {
+    font-size: 0.9rem;
+    opacity: 0.85;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.olivia-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform var(--transition-normal), border-color var(--transition-fast);
+}
+
+.olivia-hero-badge:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.olivia-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-full);
+    background: #10b981;
+    box-shadow: 0 0 10px #10b981;
+    display: inline-block;
+    transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+/* Olivia-faktor/UV status-stiler */
+.uv-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.uv-low {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.uv-moderate {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.uv-high {
+    background: rgba(249, 115, 22, 0.1);
+    color: #f97316;
+    border: 1px solid rgba(249, 115, 22, 0.15);
+}
+
+.uv-extreme {
+    background: rgba(236, 72, 153, 0.1);
+    color: #ec4899;
+    border: 1px solid rgba(236, 72, 153, 0.15);
+}
+
+/* Hero Temperatur og Symbol */
+.location-summary-temp {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.avg-icon-container {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 0.25rem;
+    animation: float 6s infinite ease-in-out;
+}
+
+.temp-display {
+    display: flex;
+    align-items: flex-start;
+    line-height: 1;
+}
+
+.temp-value {
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.temp-unit {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 0.4rem;
+    opacity: 0.9;
+}
+
+.weather-desc {
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.95;
+    margin-top: 0.25rem;
+    text-transform: capitalize;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* --------------------------------------------------------------------------
+   7. Værsammenligning Tabell (Høyre/Bunn panel)
+   -------------------------------------------------------------------------- */
+.location-comparison {
+    padding: 2.5rem;
+}
+
+.location-comparison h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: var(--radius-md);
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid var(--border-color);
+}
+
+.dark-theme .table-container {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 800px; /* Sikrer at tabellen har god plass, ruller på småskjermer */
+}
+
+.comparison-table th, 
+.comparison-table td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.comparison-table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.dark-theme .comparison-table th {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.comparison-table tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+.comparison-table tbody tr:hover {
+    background-color: var(--bg-card-hover);
+}
+
+.comparison-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Leverandør Info */
+.provider-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.provider-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 10px;
+    color: white;
+}
+
+.provider-met { background: var(--color-met); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25); }
+.provider-openmeteo { background: var(--color-openmeteo); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
+.provider-wttr { background: var(--color-wttr); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25); }
+
+.provider-name {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+/* Tabell verdiceller */
+.table-temp {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.table-cond-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.table-icon-wrapper {
+    width: 32px;
+    height: 32px;
+}
+
+.table-icon-wrapper svg {
+    width: 100%;
+    height: 100%;
+}
+
+.table-condition span {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.table-wind, .table-precip {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+/* Statusindikatorer */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+}
+
+.status-indicator::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+}
+
+.status-loading {
+    background: rgba(14, 165, 233, 0.1);
+    color: var(--color-met);
+}
+.status-loading::before {
+    background: var(--color-met);
+    animation: pulse-glow 1.2s infinite ease-in-out;
+}
+
+.status-live {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+}
+.status-live::before {
+    background: var(--color-success);
+}
+
+.status-cached {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--color-wttr);
+}
+.status-cached::before {
+    background: var(--color-wttr);
+}
+
+.status-simulated {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+}
+.status-simulated::before {
+    background: #8b5cf6;
+}
+
+@keyframes pulse-glow {
+    0% { opacity: 0.4; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0.4; transform: scale(0.8); }
+}
+
+@keyframes pulse-slow {
+    0% { box-shadow: 0 8px 20px -5px rgba(14, 165, 233, 0.4); }
+    50% { box-shadow: 0 8px 30px 2px rgba(14, 165, 233, 0.6); }
+    100% { box-shadow: 0 8px 20px -5px rgba(14, 165, 233, 0.4); }
+}
+
+/* --------------------------------------------------------------------------
+   8. Footer Styling
+   -------------------------------------------------------------------------- */
+.app-footer {
+    padding: 3rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    transition: background-color var(--transition-slow), border-color var(--transition-fast);
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.app-footer p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.footer-links {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-links a {
+    color: var(--color-met);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: opacity var(--transition-fast);
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.footer-links .dot {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* --------------------------------------------------------------------------
+   9. Responstivt Design (Media Queries)
+   ========================================================================== */
+
+/* --- Store Skjermer --- */
+@media (min-width: 1024px) {
+    .location-card {
+        flex-direction: row;
+        min-height: 380px;
+    }
+
+    .location-hero {
+        flex: 1 1 35%; /* Hero tar 35% bredde på store skjermer */
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        text-align: left;
+        padding: 3.5rem 3rem;
+    }
+
+    .location-summary-temp {
+        align-items: flex-start;
+        text-align: left;
+        margin-top: auto;
+    }
+
+    .location-comparison {
+        flex: 1 1 65%; /* Tabell-delen tar 65% bredde */
+        padding: 3.5rem 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
+/* --- Nettbrett og små desktoper --- */
+@media (max-width: 1023px) {
+    .app-header {
+        padding: 2.5rem 1.5rem 1rem 1.5rem;
+    }
+    
+    .logo h1 {
+        font-size: 1.8rem;
+    }
+
+    .location-hero {
+        padding: 2.5rem 2rem;
+    }
+
+    .location-comparison {
+        padding: 2rem;
+    }
+}
+
+/* --- Mobilskjermer --- */
+@media (max-width: 767px) {
+    .app-header {
+        padding: 2rem 1rem 1rem 1rem;
+    }
+
+    .logo h1 {
+        font-size: 1.6rem;
+    }
+
+    .subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .controls {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .control-group {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        width: 100%;
+        justify-content: space-between;
+        padding: 0 0.5rem 0.5rem 0.5rem;
+    }
+
+    .btn-icon, .btn-refresh {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dashboard-container {
+        padding: 1rem;
+        gap: 2rem;
+    }
+
+    .location-hero {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 2.5rem 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .location-summary-temp {
+        align-items: center;
+        text-align: center;
+    }
+
+    .location-meta h2 {
+        font-size: 2.2rem;
+    }
+
+    .temp-value {
+        font-size: 3.2rem;
+    }
+
+    .location-comparison {
+        padding: 1.5rem 1rem;
+    }
+
+    .location-comparison h3 {
+        font-size: 0.9rem;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .comparison-table th, 
+    .comparison-table td {
+        padding: 1rem 0.75rem;
+    }
+
+    .provider-name {
+        display: none; /* Skjuler navnet på små mobiler siden logo-boblen er nok */
+    }
+}
