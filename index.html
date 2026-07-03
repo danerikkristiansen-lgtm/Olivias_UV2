@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sammenlign sanntids værdata for Moss, Brekkstad og Phuket fra tre uavhengige kilder: MET Norway, Open-Meteo og wttr.in i et elegant, moderne design.">
+    <meta name="keywords" content="vær, værvarsel, sammenligning, Moss, Brekkstad, Phuket, MET Norway, Open-Meteo, wttr">
+    <meta name="author" content="Bastis fantastiske værvarselside">
+    
+    <!-- Open Graph for deling på sosiale medier -->
+    <meta property="og:title" content="Bastis fantastiske værvarselside - Været i Moss, Brekkstad og Phuket">
+    <meta property="og:description" content="Sammenlign sanntids værdata fra tre uavhengige leverandører side om side.">
+    <meta property="og:type" content="website">
+    
+    <title>Bastis fantastiske værvarselside — Været i Moss, Brekkstad & Phuket</title>
+    
+    <!-- Google Fonts: Outfit for elegant og moderne typografi -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Kobling til ekstern stilfil -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+    <!-- Bakgrunnsdekorasjoner for en organisk, flytende dyp gradient -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2V4M12 20V22M4 12H2M22 12H20M19.07 4.93L17.66 6.34M6.34 17.66L4.93 19.07M19.07 19.07L17.66 17.66M6.34 6.34L4.93 4.93M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <h1>Bastis fantastiske <span>værvarselside</span></h1>
+            </div>
+            
+            <p class="subtitle">Sammenlign værdata fra tre uavhengige værmodeller side om side i sanntid.</p>
+
+            <div class="controls">
+                <!-- Enhetsvelger (Celsius / Fahrenheit) -->
+                <div class="control-group">
+                    <span class="control-label">Enhet</span>
+                    <div class="toggle-switch" id="unit-toggle" role="button" aria-label="Bytt temperatur-enhet" tabindex="0">
+                        <span class="toggle-option active" data-unit="C">°C</span>
+                        <span class="toggle-option" data-unit="F">°F</span>
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <!-- Tema-bytter (Mørk / Lys) -->
+                <button class="btn-icon theme-btn" id="theme-toggle" aria-label="Bytt mellom lyst og mørkt tema">
+                    <!-- Sol-ikon (vises i mørkt tema for å bytte til lyst) -->
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <!-- Måne-ikon (vises i lyst tema for å bytte til mørkt) -->
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+
+                <!-- Manuel oppdateringsknapp -->
+                <button class="btn btn-refresh" id="refresh-btn">
+                    <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                    </svg>
+                    <span>Oppdater Data</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <!-- Moss Seksjon -->
+        <section class="location-card climate-nordic-moss" id="location-moss" aria-labelledby="title-moss">
+            <div class="location-hero">
+                <div class="hero-overlay"></div>
+                <div class="location-meta">
+                    <div class="location-badges">
+                        <span class="badge geo-badge">Norge</span>
+                        <span class="badge time-badge" id="time-moss">Kl. --:--</span>
+                    </div>
+                    <h2 id="title-moss">Moss</h2>
+                    <p class="coords">59.4340° N, 10.6577° Ø</p>
+                    <div class="olivia-hero-badge" id="olivia-badge-moss">
+                        <span class="olivia-dot"></span>
+                        <span class="olivia-text">Olivia-faktor: --</span>
+                    </div>
+                </div>
+                <div class="location-summary-temp">
+                    <div class="avg-icon-container" id="avg-icon-moss">
+                        <!-- Dynamisk SVG -->
+                    </div>
+                    <div class="temp-display">
+                        <span class="temp-value" id="avg-temp-moss">--</span><span class="temp-unit">°C</span>
+                    </div>
+                    <p class="weather-desc" id="avg-desc-moss">Laster værdata...</p>
+                </div>
+            </div>
+
+            <div class="location-comparison">
+                <h3>Værsammenligning side-by-side</h3>
+                <div class="table-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Leverandør</th>
+                                <th>Temperatur</th>
+                                <th>Værforhold</th>
+                                <th>Vindstyrke</th>
+                                <th>Nedbør / Fukt</th>
+                                <th>Olivia-faktor</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rad 1: MET Norway -->
+                            <tr id="row-moss-met">
+                                <td class="provider-info">
+                                    <span class="provider-logo provider-met">MET</span>
+                                    <span class="provider-name">MET Norway</span>
+                                </td>
+                                <td class="table-temp">--°C</td>
+                                <td class="table-condition">
+                                    <div class="table-cond-cell">
+                                        <div class="table-icon-wrapper"></div>
+                                        <span>Laster...</span>
+                                    </div>
+                                </td>
+                                <td class="table-wind">-- m/s</td>
+                                <td class="table-precip">-- %</td>
+                                <td class="table-uv">--</td>
+                                <td><span class="status-indicator status-loading">Henter</span></td>
+                            </tr>
+                            <!-- Rad 2: Open-Meteo -->
+                            <tr id="row-moss-openmeteo">
+                                <td class="provider-info">
+                                    <span class="provider-logo provider-openmeteo">OM</span>
+                                    <span class="provider-name">Open-Meteo</span>
+                                </td>
+                                <td class="table-temp">--°C</td>
+                                <td class="table-condition">
+                                    <div class="table-cond-cell">
+                                        <div class="table-icon-wrapper"></div>
+                                        <span>Laster...</span>
+                                    </div>
+                                </td>
+                                <td class="table-wind">-- m/s</td>
+                                <td class="table-precip">-- mm</td>
+                                <td class="table-uv">--</td>
+                                <td><span class="status-indicator status-loading">Henter</span></td>
+                            </tr>
+                            <!-- Rad 3: wttr.in -->
+                            <tr id="row-moss-wttr">
+                                <td class="provider-info">
+                                    <span class="provider-logo provider-wttr">WT</span>
+                                    <span class="provider-name">wttr.in</span>
+                                </td>
+                                <td class="table-temp">--°C</td>
+                                <td class="table-condition">
+                                    <div class="table-cond-cell">
+                                        <div class="table-icon-wrapper"></div>
+                                        <span>Laster...</span>
+                                    </div>
+                                </td>
+                                <td class="table-wind">-- m/s</td>
+                                <td class="table-precip">-- mm</td>
+                                <td class="table-uv">--</td>
+                                <td><span class="status-indicator status-loading">Henter</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Brekkstad Seksjon -->
+        <section class="location-card climate-nordic-brekkstad" id="location-brekkstad" aria-labelledby="title-brekkstad">
+            <div class="location-hero">
+                <div class="hero-overlay"></div>
+                <div class="location-meta">
+                    <div class="location-badges">
+                        <span class="badge geo-badge">Norge</span>
+                        <span class="badge time-badge" id="time-brekkstad">Kl. --:--</span>
+                    </div>
+                    <h2 id="title-brekkstad">Brekkstad</h2>
+                    <p class="coords">63.6871° N, 9.6627° Ø</p>
+                    <div class="olivia-hero-badge" id="olivia-badge-brekkstad">
+                        <span class="olivia-dot"></span>
+                        <span class="olivia-text">Olivia-faktor: --</span>
+                    </div>
+                </div>
+                <div class="location-summary-temp">
+                    <div class="avg-icon-container" id="avg-icon-brekkstad">
+                        <!-- Dynamisk SVG -->
+                    </div>
+                    <div class="temp-display">
+                        <span class="temp-value" id="avg-temp-brekkstad">--</span><span class="temp-unit">°C</span>
+                    </div>
+                    <p class="weather-desc" id="avg-desc-brekkstad">Laster værdata...</p>
+                </div>
+            </div>
+
+            <div class="location-comparison">
+                <h3>Værsammenligning side-by-side</h3>
+                <div class="table-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Leverandør</th>
+                                <th>Temperatur</th>
+                                <th>Værforhold</th>
+                                <th>Vindstyrke</th>
+                                <th>Nedbør / Fukt</th>
+                                <th>Olivia-faktor</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rad 1: MET Norway -->
+                            <tr id="row-brekkstad-met">
+                                <td class="provider-info">
+                                    <span class="provider-logo provider-met">MET</span>
+                                    <span class="provider-name">MET Norway</span>
+                                </td>
+                                <td class="table-temp">--°C</td>
+                                <td class="table-condition">
+                                    <div class="table-cond-cell">
+                                        <div class="table-icon-wrapper"></div>
+                                        <span>Laster...</span>
+                                    </div>
+                                </td>
+                                <td class="table-wind">-- m/s</td>
+                                <td class="table-precip">-- %</td>
+                                <td class="table-uv">--</td>
+                                <td><span class="status-indicator status-loading">Henter</span></td>
+                            </tr>
+                            <!-- Rad 2: Open-Meteo -->
+                            <tr id="row-brekkstad-openmeteo">
+                                <td class="provider-info">
+                                    <span class="provider-logo provider-openmeteo">OM</span>
+                                    <span class="provider-name">Open-Meteo</span>
+                                </td>
+                                <td class="table-temp">--°C</td>
+                                <td class="table-condition">
+                                    <div class="table-cond-cell">
+                                        <div class="table-icon-wrapper"></div>
+                                        <span>Laster...</span>
+                                    </div>
+                                </td>
+                                <td class="table-wind">-- m/s</td>
+                                <td class="table-precip">-- mm</td>
+                                <td class="table-uv">--</td>
+                                <td><span class="status-indicator status-loading">Henter</span></td>
+                            </tr>
+                            <!-- Rad 3: wttr.in -->
+                            <tr id="row-brekkstad-wttr">
+                                <td class="provider-info">
+                                    <span class="provider-logo provider-wttr">WT</span>
+                                    <span class="provider-name">wttr.in</span>
+                                </td>
+                                <td class="table-temp">--°C</td>
+                                <td class="table-condition">
+                                    <div class="table-cond-cell">
+                                        <div class="table-icon-wrapper"></div>
+                                        <span>Laster...</span>
+                                    </div>
+                                </td>
+                                <td class="table-wind">-- m/s</td>
+                                <td class="table-precip">-- mm</td>
+                                <td class="table-uv">--</td>
+                                <td><span class="status-indicator status-loading">Henter</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phuket Seksjon -->
+        <section class="location-card climate-tropical-phuket" id="location-phuket" aria-labelledby="title-phuket">
+            <div class="location-hero">
+                <div class="hero-overlay"></div>
+                <div class="location-meta">
+                    <div class="location-badges">
+                        <span class="badge geo-badge badge-th">Thailand</span>
+                        <span class="badge time-badge" id="time-phuket">Kl. --:--</span>
+                    </div>
+                    <h2 id="title-phuket">Phuket</h2>
+                    <p class="coords">7.8804° N, 98.3922° Ø</p>
+                    <div class="olivia-hero-badge" id="olivia-badge-phuket">
+                        <span class="olivia-dot"></span>
+                        <span class="olivia-text">Olivia-faktor: --</span>
+                    </div>
+                </div>
+                <div class="location-summary-temp">
+                    <div class="avg-icon-container" id="avg-icon-phuket">
+                        <!-- Dynamisk SVG -->
+                    </div>
+                    <div class="temp-display">
+                        <span class="temp-value" id="avg-temp-phuket">--</span><span class="temp-unit">°C</span>
+                    </div>
+                    <p class="weather-desc" id="avg-desc-phuket">Laster værdata...</p>
+                </div>
+            </div>
+
+            <div class="location-comparison">
+                <h3>Værsammenligning side-by-side</h3>
+                <div class="table-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Leverandør</th>
+                                <th>Temperatur</th>
+                                <th>Værforhold</th>
+                                <th>Vindstyrke</th>
+                                <th>Nedbør / Fukt</th>
+                                <th>Olivia-faktor</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rad 1: MET Norway -->
+                            <tr id="row-phuket-met">
+                                <td class="provider-info">
+                                    <span class="provider-logo provider-met">MET</span>
+                                    <span class="provider-name">MET Norway</span>
+                                </td>
+                                <td class="table-temp">--°C</td>
+                                <td class="table-condition">
+                                    <div class="table-cond-cell">
+                                        <div class="table-icon-wrapper"></div>
+                                        <span>Laster...</span>
+                                    </div>
+                                </td>
+                                <td class="table-wind">-- m/s</td>
+                                <td class="table-precip">-- %</td>
+                                <td class="table-uv">--</td>
+                                <td><span class="status-indicator status-loading">Henter</span></td>
+                            </tr>
+                            <!-- Rad 2: Open-Meteo -->
+                            <tr id="row-phuket-openmeteo">
+                                <td class="provider-info">
+                                    <span class="provider-logo provider-openmeteo">OM</span>
+                                    <span class="provider-name">Open-Meteo</span>
+                                </td>
+                                <td class="table-temp">--°C</td>
+                                <td class="table-condition">
+                                    <div class="table-cond-cell">
+                                        <div class="table-icon-wrapper"></div>
+                                        <span>Laster...</span>
+                                    </div>
+                                </td>
+                                <td class="table-wind">-- m/s</td>
+                                <td class="table-precip">-- mm</td>
+                                <td class="table-uv">--</td>
+                                <td><span class="status-indicator status-loading">Henter</span></td>
+                            </tr>
+                            <!-- Rad 3: wttr.in -->
+                            <tr id="row-phuket-wttr">
+                                <td class="provider-info">
+                                    <span class="provider-logo provider-wttr">WT</span>
+                                    <span class="provider-name">wttr.in</span>
+                                </td>
+                                <td class="table-temp">--°C</td>
+                                <td class="table-condition">
+                                    <div class="table-cond-cell">
+                                        <div class="table-icon-wrapper"></div>
+                                        <span>Laster...</span>
+                                    </div>
+                                </td>
+                                <td class="table-wind">-- m/s</td>
+                                <td class="table-precip">-- mm</td>
+                                <td class="table-uv">--</td>
+                                <td><span class="status-indicator status-loading">Henter</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-content">
+            <p>© 2026 Bastis fantastiske værvarselside. Alle data er hentet live fra leverandørenes offentlige API-er.</p>
+            <div class="footer-links">
+                <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway API</a>
+                <span class="dot">•</span>
+                <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo API</a>
+                <span class="dot">•</span>
+                <a href="https://wttr.in/" target="_blank" rel="noopener">wttr.in API</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Kobling til ekstern skriptfil -->
+    <script src="app.js"></script>
+</body>
+</html>
